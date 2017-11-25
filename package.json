@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "flow-parser": "^0.59.0"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.53",
+    "prettier": "^1.8.2",
+    "tslint": "^5.8.0",
+    "tslint-config-prettier": "^1.6.0",
+    "typescript": "^2.6.1"
+  }
+}

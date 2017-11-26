@@ -309,7 +309,8 @@ declare module 'flow-parser' {
     | TNullableTypeAnnotation
     | TObjectTypeAnnotation
     | TUnionTypeAnnotation
-    | TStringLiteralTypeAnnotation;
+    | TStringLiteralTypeAnnotation
+    | TBooleanLiteralTypeAnnotation;
 
   export type TTypeAnnotation = {
     type: "TypeAnnotation",
@@ -410,6 +411,14 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
     value: string,
+    raw: string,
+  }
+
+  export type TBooleanLiteralTypeAnnotation = {
+    type: "BooleanLiteralTypeAnnotation",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    value: boolean,
     raw: string,
   }
 

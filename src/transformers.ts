@@ -41,9 +41,10 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
     return typeAnnotation.id.name;
 
   case 'UnionTypeAnnotation':
-    return 'UNION';
+    return transformUnionTypeAnnotation(typeAnnotation);
 
-  case 'StringLiteralTypeAnnotation':
+    case 'StringLiteralTypeAnnotation':
+    case 'BooleanLiteralTypeAnnotation':
     return typeAnnotation.raw;
 
   case 'ObjectTypeAnnotation':

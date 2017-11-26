@@ -137,9 +137,21 @@ describe('transformers', () => {
         output: 'type Alias = Type;\n',
       },
       {
+        input:  'type State = true | false | \'unknown\';\n',
+        output: 'type State = true | false | \'unknown\';\n',
+      },
+      {
         input:  'type Callback = (Error, Response) => any;\n',
         output: 'type Callback = (Error, Response) => any;\n',
-      }
+      },
+      {
+        input:  'type Order = {\n' +
+                '  state: Ok | Ng | Unknown,\n' +
+                '}\n',
+        output: 'interface Order {\n' +
+                '  state: Ok | Ng | Unknown;\n' +
+                '}\n',
+      },
     ];
 
     it('transform correctly', () => {

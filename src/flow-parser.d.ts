@@ -57,6 +57,7 @@ declare module 'flow-parser' {
     elements: Array<TPattern | null>,
     loc: TFlowLoc,
     range: TFlowRange,
+    typeAnnotation: TTypeAnnotation | null,
   };
 
   export type TArrowFunctionExpression = {
@@ -264,11 +265,23 @@ declare module 'flow-parser' {
     range: TFlowRange,
   };
 
+  export type TConcreteTypeAnnotation =
+    | TAnyTypeAnnotation
+    | TMixedTypeAnnotation
+    | TEmptyTypeAnnotation
+    | TVoidTypeAnnotation
+    | TNullLiteralTypeAnnotation
+    | TNumberTypeAnnotation
+    | TStringTypeAnnotation
+    | TBooleanTypeAnnotation
+    | TFunctionTypeAnnotation;
+
   export type TTypeAnnotation = {
     type: "TypeAnnotation",
     loc: TFlowLoc,
     range: TFlowRange,
     typeParameters: void,
+    typeAnnotation: TConcreteTypeAnnotation | null,
   };
 
   export type TAnyTypeAnnotation = {
@@ -336,6 +349,7 @@ declare module 'flow-parser' {
     name: string,
     loc: TFlowLoc,
     range: TFlowRange,
+    typeAnnotation: TTypeAnnotation | null,
   };
 
   export type TIfStatement = {
@@ -461,6 +475,7 @@ declare module 'flow-parser' {
     }>,
     loc: TFlowLoc,
     range: TFlowRange,
+    typeAnnotation: TTypeAnnotation | null,
   };
 
   export type TPattern =

@@ -11,6 +11,7 @@ import {
   TImportNamespaceSpecifier,
   TTypeAlias,
   TObjectTypeProperty,
+  TUnionTypeAnnotation,
 } from 'flow-parser';
 import { neverReachHere } from './utils';
 
@@ -20,6 +21,8 @@ const typeAnotationTypeMap = {
   BooleanTypeAnnotation: 'boolean',
   VoidTypeAnnotation: 'void',
   MixedTypeAnnotation: 'any',
+  AnyTypeAnnotation: 'any',
+  FunctionTypeAnnotation: 'Function',
 };
 
 const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation): string => {
@@ -29,10 +32,18 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
   case 'BooleanTypeAnnotation':
   case 'VoidTypeAnnotation':
   case 'MixedTypeAnnotation':
+  case 'AnyTypeAnnotation':
+  case 'FunctionTypeAnnotation':
     return typeAnotationTypeMap[typeAnnotation.type];
 
   case 'GenericTypeAnnotation':
     return typeAnnotation.id.name;
+
+  case 'UnionTypeAnnotation':
+    return 'UNION';
+
+  case 'ObjectTypeAnnotation':
+    return `{\n${transformObjectTypeProperties(typeAnnotation.properties)}}`;
 
   case 'NullableTypeAnnotation':
     return transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation);
@@ -116,6 +127,7 @@ export function transformReturnType(typeAnnotation: TTypeAnnotation | null): str
     case 'NumberTypeAnnotation':
     case 'VoidTypeAnnotation':
     case 'MixedTypeAnnotation':
+    case 'AnyTypeAnnotation':
       return `: ${transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation)}`;
 
     default:
@@ -169,9 +181,23 @@ export function transformTypeParameters(typeParameterDeclaration: TTypeParameter
 }
 
 export function transformTypeAlias(typeAlias: TTypeAlias): string {
-  if (typeAlias.right.type === 'ObjectTypeAnnotation') {
+  switch (typeAlias.right.type) {
+  case 'ObjectTypeAnnotation':
     return `interface ${typeAlias.id.name}${transformTypeParameters(typeAlias.typeParameters)} {\n${transformObjectTypeProperties(typeAlias.right.properties)}}`;
-  } else {
+
+  case 'StringTypeAnnotation':
+  case 'NumberTypeAnnotation':
+  case 'BooleanTypeAnnotation':
+  case 'VoidTypeAnnotation':
+  case 'MixedTypeAnnotation':
+  case 'AnyTypeAnnotation':
+  case 'GenericTypeAnnotation':
+    return `type ${typeAlias.id.name} = ${transformConcreteTypeAnnotation(typeAlias.right)};`;
+
+  case 'UnionTypeAnnotation':
+    return `type ${typeAlias.id.name} = ${transformUnionTypeAnnotation(typeAlias.right)};`
+
+  default:
     return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}`);
   }
 }
@@ -180,4 +206,10 @@ export function transformObjectTypeProperties(properties: Array<TObjectTypePrope
   return properties.map(property => {
     return `  ${property.key.name}: ${transformConcreteTypeAnnotation(property.value)};`;
   }).join('\n') + '\n';
+}
+
+export function transformUnionTypeAnnotation(unionTypeAnnotation: TUnionTypeAnnotation): string {
+  return unionTypeAnnotation.types.map(typeAnnotation => {
+    return transformConcreteTypeAnnotation(typeAnnotation);
+  }).join(' | ');
 }

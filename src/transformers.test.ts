@@ -38,6 +38,14 @@ describe('transformers', () => {
         input:  'export default function foo(bar: mixed): mixed {}\n',
         output: 'export default function foo(bar: any): any;\n',
       },
+      {
+        input:  'export default function foo(bar: any): any {}\n',
+        output: 'export default function foo(bar: any): any;\n',
+      },
+      {
+        input:  'export default function foo(bar: Function): Function {}\n',
+        output: 'export default function foo(bar: Function): Function;\n',
+      },
 
       // export named function
       {
@@ -101,6 +109,22 @@ describe('transformers', () => {
                 '  baz: B;\n' +
                 '  qux: C;\n' +
                 '}\n',
+      },
+      {
+        input:  'export type NumberAlias = number;\n',
+        output: 'export type NumberAlias = number;\n',
+      },
+      {
+        input:  'export type Alias = Type;\n',
+        output: 'export type Alias = Type;\n',
+      },
+      {
+        input:  'export type State = {\n' +
+                '  foo: boolean;\n' +
+                '} | void;\n',
+        output: 'export type State = {\n' +
+                '  foo: boolean;\n' +
+                '} | void;\n',
       }
     ];
 

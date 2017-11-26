@@ -115,7 +115,7 @@ export function transformProgram(ast: TProgram): string {
     default:
       return neverReachHere(`Unhandled expression: ${statement.type}: ${position(statement.loc)}`);
     }
-  }).filter(statement => statement !== '').join('\n');
+  }).filter(statement => statement !== '').join('\n\n');
   return result === '' ? '' : `${result}\n`;
 }
 

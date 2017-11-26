@@ -55,8 +55,8 @@ describe('transformers', () => {
 
       // export multiple named functions
       {
-        input:  'export function foo(bar: string): number {}\nexport function foo2(bar2: number): string {}\n',
-        output: 'export function foo(bar: string): number;\nexport function foo2(bar2: number): string;\n',
+        input:  'export function foo(bar: string): number {}\n\nexport function foo2(bar2: number): string {}\n',
+        output: 'export function foo(bar: string): number;\n\nexport function foo2(bar2: number): string;\n',
       },
 
       // export named function with type parameter

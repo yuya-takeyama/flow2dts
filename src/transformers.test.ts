@@ -152,6 +152,10 @@ describe('transformers', () => {
                 '  state: Ok | Ng | Unknown;\n' +
                 '}\n',
       },
+      {
+        input:  'type Numbers = Array<number>;\n',
+        output: 'type Numbers = Array<number>;\n',
+      },
     ];
 
     it('transform correctly', () => {

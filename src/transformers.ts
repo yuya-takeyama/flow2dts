@@ -13,6 +13,7 @@ import {
   TObjectTypeProperty,
   TUnionTypeAnnotation,
   TFunctionTypeParam,
+  TTypeParameterInstantiation,
 } from 'flow-parser';
 import { neverReachHere, position } from './utils';
 
@@ -38,7 +39,7 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
     return typeAnotationTypeMap[typeAnnotation.type];
 
   case 'GenericTypeAnnotation':
-    return typeAnnotation.id.name;
+    return `${typeAnnotation.id.name}${transformTypeParameterInstantiation(typeAnnotation.typeParameters)}`;
 
   case 'UnionTypeAnnotation':
     return transformUnionTypeAnnotation(typeAnnotation);
@@ -57,6 +58,16 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
     return neverReachHere(`Unnown annotation type: ${typeAnnotation.type}: ${position(typeAnnotation.loc)}`);
   }
 };
+
+export function transformTypeParameterInstantiation(typeParameterInstantiation: TTypeParameterInstantiation | null): string {
+  if (typeParameterInstantiation) {
+    return '<' + typeParameterInstantiation.params.map(param => {
+      return transformConcreteTypeAnnotation(param);
+    }).join(', ') + '>';
+  } else {
+    return '';
+  }
+}
 
 export function transform(code: string): string {
   return transformProgram(parse(code));

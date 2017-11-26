@@ -337,7 +337,14 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
     id: TIdentifier,
-    typeParameters: object, // TODO
+    typeParameters: TTypeParameterInstantiation,
+  };
+
+  export type TTypeParameterInstantiation = {
+    type: "TypeParameterInstantiation",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    params: Array<TConcreteTypeAnnotation>,
   };
 
   export type TEmptyTypeAnnotation = {

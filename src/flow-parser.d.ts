@@ -247,7 +247,7 @@ declare module 'flow-parser' {
 
   export type TFunctionDeclaration = {
     type: "FunctionDeclaration",
-    id: TIdentifier,
+    id: TIdentifier | null,
     params: Array<TPattern>,
     defaults: Array<TExpression>,
     body: TBlockStatement,

@@ -142,7 +142,7 @@ export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | T
 }
 
 export function transformFunctionDeclaration(functionDeclaration: TFunctionDeclaration) {
-  return `function ${functionDeclaration.id.name}${transformTypeParameters(functionDeclaration.typeParameters)}` +
+  return `function ${functionDeclaration.id ? functionDeclaration.id.name : ''}${transformTypeParameters(functionDeclaration.typeParameters)}` +
     `(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;
 }
 
@@ -198,7 +198,7 @@ export function transformParameters(params: TPattern[]): string {
       }
 
     default:
-      return neverReachHere(`Unknown parameter type: ${param.type}`);
+      return neverReachHere(`Unknown parameter type: ${param.type}: ${position(param.loc)}`);
     }
   }).join(', ');
 }

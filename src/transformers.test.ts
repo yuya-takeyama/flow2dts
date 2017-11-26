@@ -46,6 +46,10 @@ describe('transformers', () => {
         input:  'export default function foo(bar: Function): Function {}\n',
         output: 'export default function foo(bar: Function): Function;\n',
       },
+      {
+        input:  'export default function (): string { return \'foo\'; }\n',
+        output: 'export default function (): string;\n',
+      },
 
       // export named function
       {

@@ -419,6 +419,7 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
     imported: TIdentifier,
+    local: TIdentifier,
   };
 
   export type TLabeledStatement = {

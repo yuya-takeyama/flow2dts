@@ -73,7 +73,11 @@ describe('transformers', () => {
       {
         input:  'import type { Foo, Baz, Qux } from \'bar\';\n',
         output: 'import { Foo, Baz, Qux } from \'bar\';\n',
-      }
+      },
+      {
+        input:  'import type { Foo as foo, Baz as baz, Qux as qux } from \'bar\';\n',
+        output: 'import { Foo as foo, Baz as baz, Qux as qux } from \'bar\';\n',
+      },
     ];
 
     it('transform correctly', () => {

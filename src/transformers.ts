@@ -82,7 +82,11 @@ export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | T
   return '{ ' + specifiers.map(specifier => {
     switch (specifier.type) {
     case 'ImportSpecifier':
-      return specifier.imported.name;
+      if (specifier.imported.name !== specifier.local.name) {
+        return `${specifier.imported.name} as ${specifier.local.name}`;
+      } else {
+        return specifier.imported.name;
+      }
 
     case 'ImportDefaultSpecifier':
       return '';

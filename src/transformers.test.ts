@@ -78,6 +78,18 @@ describe('transformers', () => {
         input:  'import type { Foo as foo, Baz as baz, Qux as qux } from \'bar\';\n',
         output: 'import { Foo as foo, Baz as baz, Qux as qux } from \'bar\';\n',
       },
+
+      // export type alias
+      {
+        input:  'export type Foo = {\n' +
+                '  bar: number,\n' +
+                '  baz: string,\n' +
+                '}\n',
+        output: 'export interface Foo {\n' +
+                '  bar: number;\n' +
+                '  baz: string;\n' +
+                '}\n',
+      }
     ];
 
     it('transform correctly', () => {

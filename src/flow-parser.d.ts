@@ -259,9 +259,30 @@ declare module 'flow-parser' {
     typeParameters: TTypeParameterDeclaration | null,
   };
 
+  export type TTypeAlias = {
+    type: "TypeAlias",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    id: TIdentifier,
+    typeParameters: TTypeParameterDeclaration | null,
+    right: TConcreteTypeAnnotation,
+  }
+
+  export type TObjectTypeProperty = {
+    type: "ObjectTypeProperty",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    key: TIdentifier,
+    value: TConcreteTypeAnnotation,
+    optional: boolean,
+    static: boolean,
+    variance: any, // TODO
+    kind: 'init', // TODO
+  }
+
   export type TExportDefaultDeclaration = {
     type: "ExportDefaultDeclaration",
-    declaration: TFunctionDeclaration,
+    declaration: TFunctionDeclaration | TTypeAlias,
     exportKind: string,
     loc: TFlowLoc,
     range: TFlowRange,
@@ -269,7 +290,7 @@ declare module 'flow-parser' {
 
   export type TExportNamedDeclaration = {
     type: "ExportNamedDeclaration",
-    declaration: TFunctionDeclaration,
+    declaration: TFunctionDeclaration | TTypeAlias,
     loc: TFlowLoc,
     range: TFlowRange,
   }
@@ -285,7 +306,8 @@ declare module 'flow-parser' {
     | TStringTypeAnnotation
     | TBooleanTypeAnnotation
     | TFunctionTypeAnnotation
-    | TNullableTypeAnnotation;
+    | TNullableTypeAnnotation
+    | TObjectTypeAnnotation;
 
   export type TTypeAnnotation = {
     type: "TypeAnnotation",
@@ -363,6 +385,14 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
     typeAnnotation: TConcreteTypeAnnotation,
+  }
+
+  export type TObjectTypeAnnotation = {
+    type: "ObjectTypeAnnotation",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    exact: boolean,
+    properties: Array<TObjectTypeProperty>,
   }
 
   export type TFunctionExpression = {

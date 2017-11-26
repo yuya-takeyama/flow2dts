@@ -9,6 +9,8 @@ import {
   TImportSpecifier,
   TImportDefaultSpecifier,
   TImportNamespaceSpecifier,
+  TTypeAlias,
+  TObjectTypeProperty,
 } from 'flow-parser';
 import { neverReachHere } from './utils';
 
@@ -64,8 +66,10 @@ export function transformProgram(ast: TProgram): string {
     case 'ExportNamedDeclaration':
       if (statement.declaration.type === 'FunctionDeclaration') {
         return `export ${transformFunctionDeclaration(statement.declaration)}`;
+      } else if (statement.declaration.type === 'TypeAlias') {
+        return `export ${transformTypeAlias(statement.declaration)}`;        
       } else {
-        return neverReachHere(`Unhandled expression: ${statement.declaration.type}`);
+        return neverReachHere(`Unhandled expression`);
       }
 
     case 'FunctionDeclaration':
@@ -162,4 +166,18 @@ export function transformTypeParameters(typeParameterDeclaration: TTypeParameter
   } else {
     return '';
   }
+}
+
+export function transformTypeAlias(typeAlias: TTypeAlias): string {
+  if (typeAlias.right.type === 'ObjectTypeAnnotation') {
+    return `interface ${typeAlias.id.name} {\n${transformObjectTypeProperties(typeAlias.right.properties)}}`;
+  } else {
+    return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}`);
+  }
+}
+
+export function transformObjectTypeProperties(properties: Array<TObjectTypeProperty>): string {
+  return properties.map(property => {
+    return `  ${property.key.name}: ${transformConcreteTypeAnnotation(property.value)};`;
+  }).join('\n') + '\n';
 }

@@ -490,6 +490,7 @@ declare module 'flow-parser' {
     id: TIdentifier, // TODO: This key should be called 'local'
     loc: TFlowLoc,
     range: TFlowRange,
+    local: TIdentifier,
   };
 
   export type TImportNamespaceSpecifier = {

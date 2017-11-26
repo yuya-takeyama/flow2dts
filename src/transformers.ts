@@ -91,11 +91,7 @@ export function transformProgram(ast: TProgram): string {
       }
 
     case 'ImportDeclaration':
-      if (statement.importKind === 'type') {
-        return `import ${transformImportSpecifiers(statement.specifiers)} from ${statement.source.raw};`;
-      } else {
-        return '';
-      }
+      return `import ${transformImportSpecifiers(statement.specifiers)} from ${statement.source.raw};`;
 
     case 'ExportNamedDeclaration':
       if (statement.declaration) {
@@ -135,7 +131,7 @@ export function transformProgram(ast: TProgram): string {
 }
 
 export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | TImportDefaultSpecifier | TImportNamespaceSpecifier>): string {
-  return '{ ' + specifiers.map(specifier => {
+  return wrapImportSpecifiers(specifiers, specifiers.map(specifier => {
     switch (specifier.type) {
     case 'ImportSpecifier':
       if (specifier.imported.name !== specifier.local.name) {
@@ -145,7 +141,7 @@ export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | T
       }
 
     case 'ImportDefaultSpecifier':
-      return '';
+      return specifier.local.name;
 
     case 'ImportNamespaceSpecifier':
       return '';
@@ -153,7 +149,12 @@ export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | T
     default:
       return neverReachHere('Unkonwn import specifier');
     }
-  }).join(', ') + ' }';
+  }));
+}
+
+function wrapImportSpecifiers(specifiers: Array<TImportSpecifier | TImportDefaultSpecifier | TImportNamespaceSpecifier>, contents: string[]): string {
+  const withBrace = specifiers[0] && specifiers[0].type === 'ImportSpecifier';
+  return (withBrace ? '{ ' : '') + contents.join(', ') + (withBrace ? ' }' : '');
 }
 
 export function transformExportSpecifiers(specifiers: Array<TExportSpecifier | TExportDefaultSpecifier | TExportNamespaceSpecifier>): string {

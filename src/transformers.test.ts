@@ -92,7 +92,7 @@ describe('transformers', () => {
       // import declaration
       {
         input:  'import { Foo } from \'bar\';\n',
-        output: '',
+        output: 'import { Foo } from \'bar\';\n',
       },
       {
         input:  'import type { Foo } from \'bar\';\n',
@@ -105,6 +105,10 @@ describe('transformers', () => {
       {
         input:  'import type { Foo as foo, Baz as baz, Qux as qux } from \'bar\';\n',
         output: 'import { Foo as foo, Baz as baz, Qux as qux } from \'bar\';\n',
+      },
+      {
+        input:  'import React from \'react\';\n',
+        output: 'import React from \'react\';\n',
       },
 
       // export type alias

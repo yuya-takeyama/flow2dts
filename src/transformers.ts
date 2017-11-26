@@ -12,22 +12,22 @@ import {
 } from 'flow-parser';
 import { neverReachHere } from './utils';
 
+const typeAnotationTypeMap = {
+  StringTypeAnnotation: 'string',
+  NumberTypeAnnotation: 'number',
+  BooleanTypeAnnotation: 'boolean',
+  VoidTypeAnnotation: 'void',
+  MixedTypeAnnotation: 'any',
+};
+
 const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation): string => {
   switch (typeAnnotation.type) {
   case 'StringTypeAnnotation':
-    return 'string';
-
   case 'NumberTypeAnnotation':
-    return 'number';
-
   case 'BooleanTypeAnnotation':
-    return 'boolean';
-
   case 'VoidTypeAnnotation':
-    return 'void';
-
   case 'MixedTypeAnnotation':
-    return 'any';
+    return typeAnotationTypeMap[typeAnnotation.type];
 
   case 'GenericTypeAnnotation':
     return typeAnnotation.id.name;

@@ -89,6 +89,18 @@ describe('transformers', () => {
                 '  bar: number;\n' +
                 '  baz: string;\n' +
                 '}\n',
+      },
+      {
+        input:  'export type Foo<A, B, C> = {\n' +
+                '  bar: A,\n' +
+                '  baz: B,\n' +
+                '  qux: C,\n' +
+                '}\n',
+        output: 'export interface Foo<A, B, C> {\n' +
+                '  bar: A;\n' +
+                '  baz: B;\n' +
+                '  qux: C;\n' +
+                '}\n',
       }
     ];
 

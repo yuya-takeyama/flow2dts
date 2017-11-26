@@ -170,7 +170,7 @@ export function transformTypeParameters(typeParameterDeclaration: TTypeParameter
 
 export function transformTypeAlias(typeAlias: TTypeAlias): string {
   if (typeAlias.right.type === 'ObjectTypeAnnotation') {
-    return `interface ${typeAlias.id.name} {\n${transformObjectTypeProperties(typeAlias.right.properties)}}`;
+    return `interface ${typeAlias.id.name}${transformTypeParameters(typeAlias.typeParameters)} {\n${transformObjectTypeProperties(typeAlias.right.properties)}}`;
   } else {
     return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}`);
   }

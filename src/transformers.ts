@@ -97,7 +97,7 @@ export function transformProgram(ast: TProgram): string {
       if (statement.declaration.type === 'FunctionDeclaration') {
         return `export default ${transformFunctionDeclaration(statement.declaration)}`;
       } else {
-        return neverReachHere(`Unhandled expression: ${statement.declaration.type}`);
+        return neverReachHere(`Unhandled expression: ${statement.declaration.type}: ${position(statement.loc)}`);
       }
 
     case 'ImportDeclaration':

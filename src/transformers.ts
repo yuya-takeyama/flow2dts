@@ -23,6 +23,9 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
   case 'VoidTypeAnnotation':
     return 'void';
 
+  case 'MixedTypeAnnotation':
+    return 'any';
+
   case 'GenericTypeAnnotation':
     return typeAnnotation.id.name;
 
@@ -75,6 +78,7 @@ export function transformReturnType(typeAnnotation: TTypeAnnotation | null): str
     case 'StringTypeAnnotation':
     case 'NumberTypeAnnotation':
     case 'VoidTypeAnnotation':
+    case 'MixedTypeAnnotation':
       return `: ${transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation)}`;
 
     default:

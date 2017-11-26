@@ -34,6 +34,10 @@ describe('transformers', () => {
         input:  'export default function foo(bar: ?string): void {}\n',
         output: 'export default function foo(bar?: string): void;\n',
       },
+      {
+        input:  'export default function foo(bar: mixed): mixed {}\n',
+        output: 'export default function foo(bar: any): any;\n',
+      },
 
       // export named function
       {

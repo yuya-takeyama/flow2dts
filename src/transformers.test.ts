@@ -58,6 +58,10 @@ describe('transformers', () => {
         input:  'export default function(): Promise<Object> { return new Promise(foo()); }\n',
         output: 'export default function(): Promise<object>;\n',
       },
+      {
+        input:  'export { default as persistReducer } from \'./persistReducer\';\n',
+        output: 'export { default as persistReducer } from \'./persistReducer\';\n',
+      },
 
       // export named function
       {

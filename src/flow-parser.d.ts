@@ -293,7 +293,23 @@ declare module 'flow-parser' {
     declaration: TFunctionDeclaration | TTypeAlias | TVariableDeclaration,
     loc: TFlowLoc,
     range: TFlowRange,
+    specifiers: Array<
+      TExportSpecifier | TExportDefaultSpecifier | TExportNamespaceSpecifier
+    >,
+    source: TLiteral,
   }
+
+  type TExportSpecifier = {
+    type: "ExportSpecifier",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    local: TIdentifier,
+    exported: TIdentifier,
+  };
+
+  type TExportDefaultSpecifier = any; // TODO
+
+  type TExportNamespaceSpecifier = any; // TODO
 
   export type TConcreteTypeAnnotation =
     | TAnyTypeAnnotation

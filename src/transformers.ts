@@ -9,6 +9,9 @@ import {
   TImportSpecifier,
   TImportDefaultSpecifier,
   TImportNamespaceSpecifier,
+  TExportSpecifier,
+  TExportDefaultSpecifier,
+  TExportNamespaceSpecifier,
   TTypeAlias,
   TObjectTypeProperty,
   TUnionTypeAnnotation,
@@ -95,18 +98,23 @@ export function transformProgram(ast: TProgram): string {
       }
 
     case 'ExportNamedDeclaration':
-      switch (statement.declaration.type) {
-      case 'FunctionDeclaration':
-        return `export ${transformFunctionDeclaration(statement.declaration)}`;
+      if (statement.declaration) {
+        switch (statement.declaration.type) {
+        case 'FunctionDeclaration':
+          return `export ${transformFunctionDeclaration(statement.declaration)}`;
 
-      case 'TypeAlias':
-        return `export ${transformTypeAlias(statement.declaration)}`;
+        case 'TypeAlias':
+          return `export ${transformTypeAlias(statement.declaration)}`;
 
-      case 'VariableDeclaration':
-        return '';
+        case 'VariableDeclaration':
+          return '';
 
-      default:
-        return neverReachHere(`Unhandled expression: ${position(statement.loc)}`);
+        default:
+          return neverReachHere(`Unhandled expression: ${position(statement.loc)}`);
+        }
+      } else {
+        const from = statement.source ? ` from ${statement.source.raw}` : '';
+        return `export ${transformExportSpecifiers(statement.specifiers)}${from};`;
       }
 
     case 'TypeAlias':
@@ -141,6 +149,28 @@ export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | T
 
     default:
       return neverReachHere('Unkonwn import specifier');
+    }
+  }).join(', ') + ' }';
+}
+
+export function transformExportSpecifiers(specifiers: Array<TExportSpecifier | TExportDefaultSpecifier | TExportNamespaceSpecifier>): string {
+  return '{ ' + specifiers.map(specifier => {
+    switch (specifier.type) {
+    case 'ExportSpecifier':
+      if (specifier.exported.name !== specifier.local.name) {
+        return `${specifier.local.name} as ${specifier.exported.name}`;
+      } else {
+        return specifier.exported.name;
+      }
+
+    case 'ExportDefaultSpecifier':
+      return '';
+
+    case 'ExportNamespaceSpecifier':
+      return '';
+
+    default:
+      return neverReachHere('Unkonwn export specifier');
     }
   }).join(', ') + ' }';
 }

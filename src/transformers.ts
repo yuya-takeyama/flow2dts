@@ -68,6 +68,10 @@ export function transformProgram(ast: TProgram): string {
         return neverReachHere(`Unhandled expression: ${statement.declaration.type}`);
       }
 
+    case 'FunctionDeclaration':
+    case 'VariableDeclaration':
+      return '';
+
     default:
       return neverReachHere(`Unhandled expression: ${statement.type}`);
     }

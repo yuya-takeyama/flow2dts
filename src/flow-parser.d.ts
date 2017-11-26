@@ -624,7 +624,7 @@ declare module 'flow-parser' {
     type: "FunctionTypeParam",
     loc: TFlowLoc,
     range: TFlowRange,
-    name: string | null,
+    name: TIdentifier,
     typeAnnotation: TConcreteTypeAnnotation,
   };
 

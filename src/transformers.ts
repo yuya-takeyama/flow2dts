@@ -39,8 +39,11 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
   case 'VoidTypeAnnotation':
   case 'MixedTypeAnnotation':
   case 'AnyTypeAnnotation':
-  case 'FunctionTypeAnnotation':
     return typeAnotationTypeMap[typeAnnotation.type];
+
+  case 'FunctionTypeAnnotation':
+    return `(${transformFunctionTypeParameters(typeAnnotation.params)}) => ` +
+      `${typeAnnotation.returnType ? transformConcreteTypeAnnotation(typeAnnotation.returnType) : 'void'}`;
 
   case 'GenericTypeAnnotation':
     if (typeAnnotation.id.name === 'Object') {
@@ -254,7 +257,7 @@ export function transformParameters(params: TPattern[]): string {
 
 export function transformFunctionTypeParameters(params: Array<TFunctionTypeParam>): string {
   return params.map(param => {
-    return transformConcreteTypeAnnotation(param.typeAnnotation);
+    return `${param.name.name}: ${transformConcreteTypeAnnotation(param.typeAnnotation)}`;
   }).join(', ');
 }
 

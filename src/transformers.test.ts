@@ -165,8 +165,8 @@ describe('transformers', () => {
         output: 'type State = true | false | \'unknown\';\n',
       },
       {
-        input:  'type Callback = (Error, Response) => any;\n',
-        output: 'type Callback = (Error, Response) => any;\n',
+        input:  'type Callback = (err: Error, res: Response) => any;\n',
+        output: 'type Callback = (err: Error, res: Response) => any;\n',
       },
       {
         input:  'type Order = {\n' +
@@ -190,6 +190,16 @@ describe('transformers', () => {
                 '};\n',
         output: 'interface Reducers {\n' +
                 '  [key: number]: Reducer;\n' +
+                '}\n',
+      },
+      {
+        input:  'type Foo<A, B, C, D, E, F> = {\n' +
+                '  foo: (f: Array<A>, g: B) => C,\n' +
+                '  [key: string]: (f: D, g: E) => F,' +
+                '}\n',
+        output: 'interface Foo<A, B, C, D, E, F> {\n' +
+                '  foo: (f: Array<A>, g: B) => C;\n' +
+                '  [key: string]: (f: D, g: E) => F;\n' +
                 '}\n',
       },
 

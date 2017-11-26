@@ -1,1 +1,3 @@
+--require supress-stack-trace
 --require ts-node/register
+--watch-extensions ts

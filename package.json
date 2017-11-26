@@ -15,6 +15,7 @@
     "mocha": "^4.0.1",
     "power-assert": "^1.4.4",
     "prettier": "^1.8.2",
+    "supress-stack-trace": "yuya-takeyama/supress-stack-trace",
     "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
     "tslint-config-prettier": "^1.6.0",

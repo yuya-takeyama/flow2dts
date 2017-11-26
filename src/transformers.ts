@@ -41,11 +41,11 @@ export function transformProgram(ast: TProgram): string {
     default:
       return neverReachHere(`Unhandled expression: ${statement.type}`);
     }
-  }).join('\n');
+  }).join('\n') + '\n';
 };
 
 export function transformFunctionDeclaration(functionDeclaration: TFunctionDeclaration) {
-  return `function ${functionDeclaration.id.name}(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)} {}`;
+  return `function ${functionDeclaration.id.name}(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;
 }
 
 export function transformReturnType(typeAnnotation: TTypeAnnotation | null): string {

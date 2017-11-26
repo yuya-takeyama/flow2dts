@@ -7,26 +7,36 @@ describe('transformers', () => {
     const examples = [
       // export default
       {
-        input:  "export default function foo(bar: string): string {}",
-        output: "export default function foo(bar: string): string {}",
+        input:  'export default function foo(bar: string): string { reeturn \'FOO!\'; }\n',
+        output: 'export default function foo(bar: string): string;\n',
       },
       {
-        input:  "export default function foo(bar: string): number {}",
-        output: "export default function foo(bar: string): number {}",
+        input:  'export default function foo(bar: string): string {}\n',
+        output: 'export default function foo(bar: string): string;\n',
       },
       {
-        input:  "export default function foo(bar: string): boolean {}",
-        output: "export default function foo(bar: string): boolean {}",
+        input:  'export default function foo(bar: string): number {}\n',
+        output: 'export default function foo(bar: string): number;\n',
       },
       {
-        input:  "export default function foo(bar: string): Baz {}",
-        output: "export default function foo(bar: string): Baz {}",
+        input:  'export default function foo(bar: string): boolean {}\n',
+        output: 'export default function foo(bar: string): boolean;\n',
+      },
+      {
+        input:  'export default function foo(bar: string): Baz {}\n',
+        output: 'export default function foo(bar: string): Baz;\n',
       },
 
       // export named function
       {
-        input:  "export function foo(bar: string): number {}",
-        output: "export function foo(bar: string): number {}",
+        input:  'export function foo(bar: string): number {}\n',
+        output: 'export function foo(bar: string): number;\n',
+      },
+
+      // export multiple named functions
+      {
+        input:  'export function foo(bar: string): number {}\nexport function foo2(bar2: number): string {}\n',
+        output: 'export function foo(bar: string): number;\nexport function foo2(bar2: number): string;\n',
       },
     ];
 

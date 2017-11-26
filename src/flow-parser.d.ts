@@ -343,7 +343,8 @@ declare module 'flow-parser' {
     | TUnionTypeAnnotation
     | TStringLiteralTypeAnnotation
     | TBooleanLiteralTypeAnnotation
-    | TIntersectionTypeAnnotation;
+    | TIntersectionTypeAnnotation
+    | TTupleTypeAnnotation;
 
   export type TTypeAnnotation = {
     type: "TypeAnnotation",
@@ -422,6 +423,13 @@ declare module 'flow-parser' {
     range: TFlowRange,
     id: TIdentifier,
     typeParameters: any, // TODO
+    types: Array<TConcreteTypeAnnotation>,
+  }
+
+  export type TTupleTypeAnnotation = {
+    type: "TupleTypeAnnotation",
+    loc: TFlowLoc,
+    range: TFlowRange,
     types: Array<TConcreteTypeAnnotation>,
   }
 

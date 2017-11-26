@@ -317,6 +317,9 @@ export function transformTypeAlias(typeAlias: TTypeAlias): string {
   case 'FunctionTypeAnnotation':
     return `type ${typeAlias.id.name} = ${transformFunctionTypeAnnotation(typeAlias.right)};`;
 
+  case 'TupleTypeAnnotation':
+    return `type ${typeAlias.id.name} = ${transformTupleTypeAnnotation(typeAlias.right.types)};`;
+
   default:
     return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}: ${position(typeAlias.loc)}`);
   }
@@ -340,4 +343,10 @@ export function transformUnionTypeAnnotation(unionTypeAnnotation: TUnionTypeAnno
   return unionTypeAnnotation.types.map(typeAnnotation => {
     return transformConcreteTypeAnnotation(typeAnnotation);
   }).join(' | ');
+}
+
+export function transformTupleTypeAnnotation(types: Array<TConcreteTypeAnnotation>): string {
+  return '[' + types.map(type => {
+    return transformConcreteTypeAnnotation(type);
+  }).join(', ') + ']';
 }

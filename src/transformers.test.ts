@@ -189,6 +189,10 @@ describe('transformers', () => {
         output: 'type Foo = object;\n',
       },
       {
+        input:  'type FooTuple = [string, number, \'ok\'];\n',
+        output: 'type FooTuple = [string, number, \'ok\'];\n',
+      },
+      {
         input:  'type Reducers = {\n' +
                 '  [key: number]: Reducer,\n' +
                 '};\n',

@@ -38,6 +38,12 @@ describe('transformers', () => {
         input:  'export function foo(bar: string): number {}\nexport function foo2(bar2: number): string {}\n',
         output: 'export function foo(bar: string): number;\nexport function foo2(bar2: number): string;\n',
       },
+
+      // export named function with type parameter
+      {
+        input:  'export function foo<T>(bar: T): T {}\n',
+        output: 'export function foo<T>(bar: T): T;\n',
+      },
     ];
 
     it('transform correctly', () => {

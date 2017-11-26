@@ -1,8 +1,16 @@
-import { parse, TProgram, TPattern, TFunctionDeclaration, TTypeAnnotation } from 'flow-parser';
+import {
+  parse,
+  TProgram,
+  TPattern,
+  TFunctionDeclaration,
+  TTypeAnnotation,
+  TConcreteTypeAnnotation,
+  TTypeParameterDeclaration,
+} from 'flow-parser';
 import { neverReachHere } from './utils';
 
-const typeAnnotationTypeToType = (typeAnnotationType: string): string => {
-  switch (typeAnnotationType) {
+const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation): string => {
+  switch (typeAnnotation.type) {
   case 'StringTypeAnnotation':
     return 'string';
 
@@ -12,8 +20,11 @@ const typeAnnotationTypeToType = (typeAnnotationType: string): string => {
   case 'BooleanTypeAnnotation':
     return 'boolean';
 
+  case 'GenericTypeAnnotation':
+    return typeAnnotation.id.name;
+
   default:
-    return neverReachHere(`Unnown annotation type: ${typeAnnotationType}`);
+    return neverReachHere(`Unnown annotation type: ${typeAnnotation.type}`);
   }
 };
 
@@ -45,7 +56,7 @@ export function transformProgram(ast: TProgram): string {
 };
 
 export function transformFunctionDeclaration(functionDeclaration: TFunctionDeclaration) {
-  return `function ${functionDeclaration.id.name}(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;
+  return `function ${functionDeclaration.id.name}${transformTypeParameters(functionDeclaration.typeParameters)}(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;
 }
 
 export function transformReturnType(typeAnnotation: TTypeAnnotation | null): string {
@@ -57,7 +68,7 @@ export function transformReturnType(typeAnnotation: TTypeAnnotation | null): str
     case 'BooleanTypeAnnotation':
     case 'StringTypeAnnotation':
     case 'NumberTypeAnnotation':
-      return `: ${typeAnnotationTypeToType(typeAnnotation.typeAnnotation.type)}`;
+      return `: ${transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation)}`;
 
     default:
       return neverReachHere(`Unhandled type annotation type: ${typeAnnotation.typeAnnotation.type}`);
@@ -72,7 +83,7 @@ export function transformParameters(params: TPattern[]): string {
     switch (param.type) {
     case 'Identifier':
       if (param.typeAnnotation && param.typeAnnotation.typeAnnotation) {
-        return `${param.name}: ${typeAnnotationTypeToType(param.typeAnnotation.typeAnnotation.type)}`;
+        return `${param.name}: ${transformConcreteTypeAnnotation(param.typeAnnotation.typeAnnotation)}`;
       } else {
         return param.name;
       }
@@ -86,7 +97,7 @@ export function transformParameters(params: TPattern[]): string {
       default:
         if (param.argument.type === 'Identifier') {
           if (param.argument.typeAnnotation && param.argument.typeAnnotation.typeAnnotation) {
-            return `...${param.argument.name}: ${typeAnnotationTypeToType(param.argument.typeAnnotation.typeAnnotation.type)}`;
+            return `...${param.argument.name}: ${transformConcreteTypeAnnotation(param.argument.typeAnnotation.typeAnnotation)}`;
           } else {
             return `...${param.argument.name}`;
           }
@@ -99,4 +110,12 @@ export function transformParameters(params: TPattern[]): string {
       return neverReachHere(`Unknown parameter type: ${param.type}`);
     }
   }).join(', ');
+}
+
+export function transformTypeParameters(typeParameterDeclaration: TTypeParameterDeclaration | null): string {
+  if (typeParameterDeclaration) {
+    return `<${typeParameterDeclaration.params.map(typeParameter => typeParameter.name).join(', ')}>`;
+  } else {
+    return '';
+  }
 }

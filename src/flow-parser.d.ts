@@ -256,6 +256,7 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
     returnType: TTypeAnnotation | null,
+    typeParameters: TTypeParameterDeclaration | null,
   };
 
   export type TExportDefaultDeclaration = {
@@ -526,6 +527,23 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
   };
+
+  export type TTypeParameterDeclaration = {
+    type: "TypeParameterDeclaration",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    params: Array<TTypeParameter>,
+  }
+
+  export type TTypeParameter = {
+    type: "TypeParameter",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    name: string,
+    bound: any, // TODO
+    variance: any, // TODO
+    default: any, // TODO
+  }
 
   export type TReturnStatement = {
     type: "ReturnStatement",

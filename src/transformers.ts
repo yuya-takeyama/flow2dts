@@ -74,7 +74,7 @@ export function transform(code: string): string {
 }
 
 export function transformProgram(ast: TProgram): string {
-  return ast.body.map((statement) => {
+  const result = ast.body.map((statement) => {
     switch (statement.type) {
     case 'ExportDefaultDeclaration':
       if (statement.declaration.type === 'FunctionDeclaration') {
@@ -91,12 +91,18 @@ export function transformProgram(ast: TProgram): string {
       }
 
     case 'ExportNamedDeclaration':
-      if (statement.declaration.type === 'FunctionDeclaration') {
+      switch (statement.declaration.type) {
+      case 'FunctionDeclaration':
         return `export ${transformFunctionDeclaration(statement.declaration)}`;
-      } else if (statement.declaration.type === 'TypeAlias') {
+
+      case 'TypeAlias':
         return `export ${transformTypeAlias(statement.declaration)}`;
-      } else {
-        return neverReachHere('Unhandled expression');
+
+      case 'VariableDeclaration':
+        return '';
+
+      default:
+        return neverReachHere(`Unhandled expression: ${position(statement.loc)}`);
       }
 
     case 'TypeAlias':
@@ -109,7 +115,8 @@ export function transformProgram(ast: TProgram): string {
     default:
       return neverReachHere(`Unhandled expression: ${statement.type}: ${position(statement.loc)}`);
     }
-  }).join('\n') + '\n';
+  }).filter(statement => statement !== '').join('\n');
+  return result === '' ? '' : `${result}\n`;
 }
 
 export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | TImportDefaultSpecifier | TImportNamespaceSpecifier>): string {

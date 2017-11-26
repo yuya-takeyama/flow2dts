@@ -72,7 +72,7 @@ describe('transformers', () => {
       // import declaration
       {
         input:  'import { Foo } from \'bar\';\n',
-        output: '\n',
+        output: '',
       },
       {
         input:  'import type { Foo } from \'bar\';\n',
@@ -156,6 +156,16 @@ describe('transformers', () => {
         input:  'type Numbers = Array<number>;\n',
         output: 'type Numbers = Array<number>;\n',
       },
+
+      // skipped declaration
+      {
+        input:  'const foo = 1;\n',
+        output: '',
+      },
+      {
+        input:  'function foo() {}\n',
+        output: '',
+      }
     ];
 
     it('transform correctly', () => {

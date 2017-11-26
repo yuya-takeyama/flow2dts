@@ -282,7 +282,7 @@ declare module 'flow-parser' {
 
   export type TExportDefaultDeclaration = {
     type: "ExportDefaultDeclaration",
-    declaration: TFunctionDeclaration | TTypeAlias,
+    declaration: TFunctionDeclaration | TTypeAlias | TVariableDeclaration,
     exportKind: string,
     loc: TFlowLoc,
     range: TFlowRange,
@@ -290,7 +290,7 @@ declare module 'flow-parser' {
 
   export type TExportNamedDeclaration = {
     type: "ExportNamedDeclaration",
-    declaration: TFunctionDeclaration | TTypeAlias,
+    declaration: TFunctionDeclaration | TTypeAlias | TVariableDeclaration,
     loc: TFlowLoc,
     range: TFlowRange,
   }

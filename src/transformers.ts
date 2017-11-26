@@ -85,7 +85,7 @@ export function transformProgram(ast: TProgram): string {
 
     case 'ImportDeclaration':
       if (statement.importKind === 'type') {
-        return `import ${transformImportSpecifiers(statement.specifiers)} from ${statement.source.raw};`
+        return `import ${transformImportSpecifiers(statement.specifiers)} from ${statement.source.raw};`;
       } else {
         return '';
       }
@@ -94,9 +94,9 @@ export function transformProgram(ast: TProgram): string {
       if (statement.declaration.type === 'FunctionDeclaration') {
         return `export ${transformFunctionDeclaration(statement.declaration)}`;
       } else if (statement.declaration.type === 'TypeAlias') {
-        return `export ${transformTypeAlias(statement.declaration)}`;        
+        return `export ${transformTypeAlias(statement.declaration)}`;
       } else {
-        return neverReachHere(`Unhandled expression`);
+        return neverReachHere('Unhandled expression');
       }
 
     case 'TypeAlias':
@@ -110,7 +110,7 @@ export function transformProgram(ast: TProgram): string {
       return neverReachHere(`Unhandled expression: ${statement.type}: ${position(statement.loc)}`);
     }
   }).join('\n') + '\n';
-};
+}
 
 export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | TImportDefaultSpecifier | TImportNamespaceSpecifier>): string {
   return '{ ' + specifiers.map(specifier => {
@@ -221,7 +221,7 @@ export function transformTypeAlias(typeAlias: TTypeAlias): string {
     return `type ${typeAlias.id.name} = ${transformConcreteTypeAnnotation(typeAlias.right)};`;
 
   case 'UnionTypeAnnotation':
-    return `type ${typeAlias.id.name} = ${transformUnionTypeAnnotation(typeAlias.right)};`
+    return `type ${typeAlias.id.name} = ${transformUnionTypeAnnotation(typeAlias.right)};`;
 
   case 'FunctionTypeAnnotation':
     return `type ${typeAlias.id.name} = (${transformFunctionTypeParameters(typeAlias.right.params)}) => ${typeAlias.right.returnType ? transformConcreteTypeAnnotation(typeAlias.right.returnType) : 'void'};`;

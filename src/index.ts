@@ -13,6 +13,6 @@ readFile(process.argv[2], {}, (err, data) => {
     const ast = parse(code);
     process.stdout.write(JSON.stringify(ast) + '\n');
   } else {
-    console.log(transform(code));
+    process.stdout.write(transform(code));
   }
 });

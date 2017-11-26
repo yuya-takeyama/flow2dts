@@ -299,6 +299,13 @@ declare module 'flow-parser' {
     source: TLiteral,
   }
 
+  export type TExportAllDeclaration = {
+    type: "ExportAllDeclaration",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    source: TLiteral,
+  }
+
   type TExportSpecifier = {
     type: "ExportSpecifier",
     loc: TFlowLoc,
@@ -681,6 +688,7 @@ declare module 'flow-parser' {
     | TFunctionDeclaration
     | TExportDefaultDeclaration
     | TExportNamedDeclaration
+    | TExportAllDeclaration
     | TIfStatement
     | TImportDeclaration
     | TLabeledStatement

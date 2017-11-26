@@ -62,6 +62,10 @@ describe('transformers', () => {
         input:  'export { default as persistReducer } from \'./persistReducer\';\n',
         output: 'export { default as persistReducer } from \'./persistReducer\';\n',
       },
+      {
+        input:  'export * from \'./foo\';\n',
+        output: 'export * from \'./foo\';\n',
+      },
 
       // export named function
       {

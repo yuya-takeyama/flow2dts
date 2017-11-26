@@ -117,6 +117,9 @@ export function transformProgram(ast: TProgram): string {
         return `export ${transformExportSpecifiers(statement.specifiers)}${from};`;
       }
 
+    case 'ExportAllDeclaration':
+      return `export * from ${statement.source.raw};`;
+
     case 'TypeAlias':
       return transformTypeAlias(statement);
 

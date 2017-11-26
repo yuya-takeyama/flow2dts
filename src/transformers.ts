@@ -12,8 +12,9 @@ import {
   TTypeAlias,
   TObjectTypeProperty,
   TUnionTypeAnnotation,
+  TFunctionTypeParam,
 } from 'flow-parser';
-import { neverReachHere } from './utils';
+import { neverReachHere, position } from './utils';
 
 const typeAnotationTypeMap = {
   StringTypeAnnotation: 'string',
@@ -42,6 +43,9 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
   case 'UnionTypeAnnotation':
     return 'UNION';
 
+  case 'StringLiteralTypeAnnotation':
+    return typeAnnotation.raw;
+
   case 'ObjectTypeAnnotation':
     return `{\n${transformObjectTypeProperties(typeAnnotation.properties)}}`;
 
@@ -49,7 +53,7 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
     return transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation);
 
   default:
-    return neverReachHere(`Unnown annotation type: ${typeAnnotation.type}`);
+    return neverReachHere(`Unnown annotation type: ${typeAnnotation.type}: ${position(typeAnnotation.loc)}`);
   }
 };
 
@@ -83,12 +87,15 @@ export function transformProgram(ast: TProgram): string {
         return neverReachHere(`Unhandled expression`);
       }
 
+    case 'TypeAlias':
+      return transformTypeAlias(statement);
+
     case 'FunctionDeclaration':
     case 'VariableDeclaration':
       return '';
 
     default:
-      return neverReachHere(`Unhandled expression: ${statement.type}`);
+      return neverReachHere(`Unhandled expression: ${statement.type}: ${position(statement.loc)}`);
     }
   }).join('\n') + '\n';
 };
@@ -172,6 +179,12 @@ export function transformParameters(params: TPattern[]): string {
   }).join(', ');
 }
 
+export function transformFunctionTypeParameters(params: Array<TFunctionTypeParam>): string {
+  return params.map(param => {
+    return transformConcreteTypeAnnotation(param.typeAnnotation);
+  }).join(', ');
+}
+
 export function transformTypeParameters(typeParameterDeclaration: TTypeParameterDeclaration | null): string {
   if (typeParameterDeclaration) {
     return `<${typeParameterDeclaration.params.map(typeParameter => typeParameter.name).join(', ')}>`;
@@ -192,13 +205,17 @@ export function transformTypeAlias(typeAlias: TTypeAlias): string {
   case 'MixedTypeAnnotation':
   case 'AnyTypeAnnotation':
   case 'GenericTypeAnnotation':
+  case 'StringLiteralTypeAnnotation':
     return `type ${typeAlias.id.name} = ${transformConcreteTypeAnnotation(typeAlias.right)};`;
 
   case 'UnionTypeAnnotation':
     return `type ${typeAlias.id.name} = ${transformUnionTypeAnnotation(typeAlias.right)};`
 
+  case 'FunctionTypeAnnotation':
+    return `type ${typeAlias.id.name} = (${transformFunctionTypeParameters(typeAlias.right.params)}) => ${typeAlias.right.returnType ? transformConcreteTypeAnnotation(typeAlias.right.returnType) : 'void'};`;
+
   default:
-    return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}`);
+    return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}: ${position(typeAlias.loc)}`);
   }
 }
 

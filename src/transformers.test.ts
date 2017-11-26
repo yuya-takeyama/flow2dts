@@ -125,6 +125,20 @@ describe('transformers', () => {
         output: 'export type State = {\n' +
                 '  foo: boolean;\n' +
                 '} | void;\n',
+      },
+      {
+        input:  'export type State = \'SUCCESS\';\n',
+        output: 'export type State = \'SUCCESS\';\n',
+      },
+
+      // non-exported type alias
+      {
+        input:  'type Alias = Type;\n',
+        output: 'type Alias = Type;\n',
+      },
+      {
+        input:  'type Callback = (Error, Response) => any;\n',
+        output: 'type Callback = (Error, Response) => any;\n',
       }
     ];
 

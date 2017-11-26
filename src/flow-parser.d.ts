@@ -308,7 +308,8 @@ declare module 'flow-parser' {
     | TFunctionTypeAnnotation
     | TNullableTypeAnnotation
     | TObjectTypeAnnotation
-    | TUnionTypeAnnotation;
+    | TUnionTypeAnnotation
+    | TStringLiteralTypeAnnotation;
 
   export type TTypeAnnotation = {
     type: "TypeAnnotation",
@@ -378,7 +379,8 @@ declare module 'flow-parser' {
     type: "FunctionTypeAnnotation",
     loc: TFlowLoc,
     range: TFlowRange,
-    params: Array<TPattern>,
+    params: Array<TFunctionTypeParam>,
+    returnType:  TConcreteTypeAnnotation | null,
   };
 
   export type TNullableTypeAnnotation = {
@@ -401,6 +403,14 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
     types: Array<TConcreteTypeAnnotation>,
+  }
+
+  export type TStringLiteralTypeAnnotation = {
+    type: "StringLiteralTypeAnnotation",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    value: string,
+    raw: string,
   }
 
   export type TFunctionExpression = {
@@ -549,7 +559,15 @@ declare module 'flow-parser' {
     | TMemberExpression
     | TArrayPattern
     | TObjectPattern
-    | TRestElement
+    | TRestElement;
+
+  export type TFunctionTypeParam = {
+    type: "FunctionTypeParam",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    name: string | null,
+    typeAnnotation: TConcreteTypeAnnotation,
+  };
 
   export type TProgram = {
     type: "Program",
@@ -632,6 +650,7 @@ declare module 'flow-parser' {
     | TVariableDeclaration
     | TWhileStatement
     | TWithStatement
+    | TTypeAlias
   ;
 
   export type TSuper = {

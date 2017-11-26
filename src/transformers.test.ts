@@ -44,6 +44,10 @@ describe('transformers', () => {
         input:  'export function foo<T>(bar: T): T {}\n',
         output: 'export function foo<T>(bar: T): T;\n',
       },
+      {
+        input:  'export function foo<T, U>(bar: T): U {}\n',
+        output: 'export function foo<T, U>(bar: T): U;\n',
+      },
     ];
 
     it('transform correctly', () => {

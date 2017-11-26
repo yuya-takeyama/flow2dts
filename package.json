@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint --project tsconfig.json",
+    "lint:fix": "yarn lint --fix"
+  },
   "dependencies": {
     "flow-parser": "^0.59.0"
   },

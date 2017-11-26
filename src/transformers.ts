@@ -146,7 +146,7 @@ export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | T
 }
 
 export function transformFunctionDeclaration(functionDeclaration: TFunctionDeclaration) {
-  return `function ${functionDeclaration.id ? functionDeclaration.id.name : ''}${transformTypeParameters(functionDeclaration.typeParameters)}` +
+  return `function${functionDeclaration.id ? ` ${functionDeclaration.id.name}` : ''}${transformTypeParameters(functionDeclaration.typeParameters)}` +
     `(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;
 }
 

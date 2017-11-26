@@ -47,12 +47,12 @@ describe('transformers', () => {
         output: 'export default function foo(bar: Function): Function;\n',
       },
       {
-        input:  'export default function (): string { return \'foo\'; }\n',
-        output: 'export default function (): string;\n',
+        input:  'export default function(): string { return \'foo\'; }\n',
+        output: 'export default function(): string;\n',
       },
       {
-        input:  'export default function (config: Config = {}): string { return \'foo\'; }\n',
-        output: 'export default function (config: Config): string;\n',
+        input:  'export default function(config: Config = {}): string { return \'foo\'; }\n',
+        output: 'export default function(config: Config): string;\n',
       },
 
       // export named function

@@ -7,11 +7,12 @@ readFile(process.argv[2], {}, (err, data) => {
     throw err;
   }
 
-  const ast = parse(data.toString());
+  const code = data.toString();
 
   if (process.argv[3] === '--dump') {
+    const ast = parse(code);
     process.stdout.write(JSON.stringify(ast) + '\n');
   } else {
-    console.log(transform(ast));
+    console.log(transform(code));
   }
 });

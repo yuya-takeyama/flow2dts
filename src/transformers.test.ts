@@ -184,6 +184,14 @@ describe('transformers', () => {
         input:  'type Foo = Object;\n',
         output: 'type Foo = object;\n',
       },
+      {
+        input:  'type Reducers = {\n' +
+                '  [key: number]: Reducer,\n' +
+                '};\n',
+        output: 'interface Reducers {\n' +
+                '  [key: number]: Reducer;\n' +
+                '}\n',
+      },
 
       // skipped declaration
       {

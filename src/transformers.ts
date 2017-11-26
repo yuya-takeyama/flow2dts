@@ -14,6 +14,7 @@ import {
   TExportNamespaceSpecifier,
   TTypeAlias,
   TObjectTypeProperty,
+  TObjectTypeIndexer,
   TUnionTypeAnnotation,
   TFunctionTypeParam,
   TTypeParameterInstantiation,
@@ -269,7 +270,9 @@ export function transformTypeAlias(typeAlias: TTypeAlias): string {
   switch (typeAlias.right.type) {
   case 'ObjectTypeAnnotation':
     return `interface ${typeAlias.id.name}${transformTypeParameters(typeAlias.typeParameters)} {\n` +
-      `${transformObjectTypeProperties(typeAlias.right.properties)}}`;
+      transformObjectTypeProperties(typeAlias.right.properties) +
+      transformObjectTypeIndexers(typeAlias.right.indexers) +
+      '}';
 
   case 'StringTypeAnnotation':
   case 'NumberTypeAnnotation':
@@ -294,9 +297,17 @@ export function transformTypeAlias(typeAlias: TTypeAlias): string {
 }
 
 export function transformObjectTypeProperties(properties: Array<TObjectTypeProperty>): string {
-  return properties.map(property => {
+  const result = properties.map(property => {
     return `  ${property.key.name}: ${transformConcreteTypeAnnotation(property.value)};`;
-  }).join('\n') + '\n';
+  }).join('\n');
+  return result ? result + '\n' : '';
+}
+
+export function transformObjectTypeIndexers(indexers: Array<TObjectTypeIndexer>): string {
+  const result = indexers.map(indexer => {
+    return `  [${indexer.id.name}: ${transformConcreteTypeAnnotation(indexer.key)}]: ${transformConcreteTypeAnnotation(indexer.value)};`;
+  }).join('\n');
+  return result ? result + '\n' : '';
 }
 
 export function transformUnionTypeAnnotation(unionTypeAnnotation: TUnionTypeAnnotation): string {

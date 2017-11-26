@@ -280,6 +280,15 @@ declare module 'flow-parser' {
     kind: 'init', // TODO
   }
 
+  export type TObjectTypeIndexer = {
+    type: "ObjectTypeIndexer",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    id: TIdentifier,
+    key: TConcreteTypeAnnotation,
+    value: TConcreteTypeAnnotation,
+  }
+
   export type TExportDefaultDeclaration = {
     type: "ExportDefaultDeclaration",
     declaration: TFunctionDeclaration | TTypeAlias | TVariableDeclaration,
@@ -427,6 +436,7 @@ declare module 'flow-parser' {
     range: TFlowRange,
     exact: boolean,
     properties: Array<TObjectTypeProperty>,
+    indexers: Array<TObjectTypeIndexer>,
   }
 
   export type TUnionTypeAnnotation = {

@@ -196,28 +196,7 @@ export function transformFunctionDeclaration(functionDeclaration: TFunctionDecla
 
 export function transformReturnType(typeAnnotation: TTypeAnnotation | null): string {
   if (typeAnnotation && typeAnnotation.typeAnnotation) {
-    switch (typeAnnotation.typeAnnotation.type) {
-    case 'GenericTypeAnnotation':
-      if (typeAnnotation.typeAnnotation.typeParameters) {
-        return `: ${typeAnnotation.typeAnnotation.id.name}${transformTypeParameterInstantiation(typeAnnotation.typeAnnotation.typeParameters)}`;
-      } else {
-        return `: ${typeAnnotation.typeAnnotation.id.name}`;
-      }
-
-    case 'BooleanTypeAnnotation':
-    case 'StringTypeAnnotation':
-    case 'NumberTypeAnnotation':
-    case 'VoidTypeAnnotation':
-    case 'MixedTypeAnnotation':
-    case 'AnyTypeAnnotation':
-      return `: ${transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation)}`;
-
-    case 'FunctionTypeAnnotation':
-      return `: ${transformFunctionTypeAnnotation(typeAnnotation.typeAnnotation)}`;
-
-    default:
-      return neverReachHere(`Unhandled type annotation type: ${typeAnnotation.typeAnnotation.type}: ${position(typeAnnotation.loc)}`);
-    }
+    return `: ${transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation)}`;
   } else {
     return '';
   }

@@ -127,12 +127,16 @@ export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | T
 
     case 'ImportNamespaceSpecifier':
       return '';
+
+    default:
+      return neverReachHere('Unkonwn import specifier');
     }
   }).join(', ') + ' }';
 }
 
 export function transformFunctionDeclaration(functionDeclaration: TFunctionDeclaration) {
-  return `function ${functionDeclaration.id.name}${transformTypeParameters(functionDeclaration.typeParameters)}(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;
+  return `function ${functionDeclaration.id.name}${transformTypeParameters(functionDeclaration.typeParameters)}` +
+    `(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;
 }
 
 export function transformReturnType(typeAnnotation: TTypeAnnotation | null): string {
@@ -162,7 +166,8 @@ export function transformParameters(params: TPattern[]): string {
     switch (param.type) {
     case 'Identifier':
       if (param.typeAnnotation && param.typeAnnotation.typeAnnotation) {
-        return `${param.name}${param.typeAnnotation.typeAnnotation.type === 'NullableTypeAnnotation' ? '?' : ''}: ${transformConcreteTypeAnnotation(param.typeAnnotation.typeAnnotation)}`;
+        return `${param.name}${param.typeAnnotation.typeAnnotation.type === 'NullableTypeAnnotation' ? '?' : ''}: ` +
+          `${transformConcreteTypeAnnotation(param.typeAnnotation.typeAnnotation)}`;
       } else {
         return param.name;
       }
@@ -208,7 +213,8 @@ export function transformTypeParameters(typeParameterDeclaration: TTypeParameter
 export function transformTypeAlias(typeAlias: TTypeAlias): string {
   switch (typeAlias.right.type) {
   case 'ObjectTypeAnnotation':
-    return `interface ${typeAlias.id.name}${transformTypeParameters(typeAlias.typeParameters)} {\n${transformObjectTypeProperties(typeAlias.right.properties)}}`;
+    return `interface ${typeAlias.id.name}${transformTypeParameters(typeAlias.typeParameters)} {\n` +
+      `${transformObjectTypeProperties(typeAlias.right.properties)}}`;
 
   case 'StringTypeAnnotation':
   case 'NumberTypeAnnotation':
@@ -224,7 +230,8 @@ export function transformTypeAlias(typeAlias: TTypeAlias): string {
     return `type ${typeAlias.id.name} = ${transformUnionTypeAnnotation(typeAlias.right)};`;
 
   case 'FunctionTypeAnnotation':
-    return `type ${typeAlias.id.name} = (${transformFunctionTypeParameters(typeAlias.right.params)}) => ${typeAlias.right.returnType ? transformConcreteTypeAnnotation(typeAlias.right.returnType) : 'void'};`;
+    return `type ${typeAlias.id.name} = (${transformFunctionTypeParameters(typeAlias.right.params)}) => ` +
+      `${typeAlias.right.returnType ? transformConcreteTypeAnnotation(typeAlias.right.returnType) : 'void'};`;
 
   default:
     return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}: ${position(typeAlias.loc)}`);

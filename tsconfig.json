@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "allowJs": false,
     "checkJs": false,
-    "jsx": "react-native",
+    "jsx": "preserve",
     "declaration": false,
     "sourceMap": true,
     "outDir": "./build",
@@ -19,9 +19,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "filesGlob": [
-    "typings/index.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.ts"
   ],
   "types": [
     "react",
@@ -29,8 +27,6 @@
     "jest"
   ],
   "exclude": [
-    "android",
-    "ios",
     "build",
     "coverage",
     "node_modules"

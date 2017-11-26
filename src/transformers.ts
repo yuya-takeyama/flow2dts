@@ -6,6 +6,9 @@ import {
   TTypeAnnotation,
   TConcreteTypeAnnotation,
   TTypeParameterDeclaration,
+  TImportSpecifier,
+  TImportDefaultSpecifier,
+  TImportNamespaceSpecifier,
 } from 'flow-parser';
 import { neverReachHere } from './utils';
 
@@ -51,6 +54,13 @@ export function transformProgram(ast: TProgram): string {
         return neverReachHere(`Unhandled expression: ${statement.declaration.type}`);
       }
 
+    case 'ImportDeclaration':
+      if (statement.importKind === 'type') {
+        return `import ${transformImportSpecifiers(statement.specifiers)} from ${statement.source.raw};`
+      } else {
+        return '';
+      }
+
     case 'ExportNamedDeclaration':
       if (statement.declaration.type === 'FunctionDeclaration') {
         return `export ${transformFunctionDeclaration(statement.declaration)}`;
@@ -63,6 +73,21 @@ export function transformProgram(ast: TProgram): string {
     }
   }).join('\n') + '\n';
 };
+
+export function transformImportSpecifiers(specifiers: Array<TImportSpecifier | TImportDefaultSpecifier | TImportNamespaceSpecifier>): string {
+  return '{ ' + specifiers.map(specifier => {
+    switch (specifier.type) {
+    case 'ImportSpecifier':
+      return specifier.imported.name;
+
+    case 'ImportDefaultSpecifier':
+      return '';
+
+    case 'ImportNamespaceSpecifier':
+      return '';
+    }
+  }).join(', ') + ' }';
+}
 
 export function transformFunctionDeclaration(functionDeclaration: TFunctionDeclaration) {
   return `function ${functionDeclaration.id.name}${transformTypeParameters(functionDeclaration.typeParameters)}(${transformParameters(functionDeclaration.params)})${transformReturnType(functionDeclaration.returnType)};`;

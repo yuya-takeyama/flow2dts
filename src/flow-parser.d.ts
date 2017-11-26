@@ -418,6 +418,7 @@ declare module 'flow-parser' {
     name: TIdentifier | null, // TODO: This key should be called 'local'
     loc: TFlowLoc,
     range: TFlowRange,
+    imported: TIdentifier,
   };
 
   export type TLabeledStatement = {

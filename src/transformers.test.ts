@@ -60,6 +60,20 @@ describe('transformers', () => {
         input:  'export function foo<T, U>(bar: T): U {}\n',
         output: 'export function foo<T, U>(bar: T): U;\n',
       },
+
+      // import declaration
+      {
+        input:  'import { Foo } from \'bar\';\n',
+        output: '\n',
+      },
+      {
+        input:  'import type { Foo } from \'bar\';\n',
+        output: 'import { Foo } from \'bar\';\n',
+      },
+      {
+        input:  'import type { Foo, Baz, Qux } from \'bar\';\n',
+        output: 'import { Foo, Baz, Qux } from \'bar\';\n',
+      }
     ];
 
     it('transform correctly', () => {

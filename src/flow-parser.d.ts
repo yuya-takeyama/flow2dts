@@ -570,12 +570,21 @@ declare module 'flow-parser' {
     typeAnnotation: TTypeAnnotation | null,
   };
 
+  export type TAssignmentPattern = {
+    type: "AssignmentPattern",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    left: TIdentifier,
+    right: TExpression,
+  };
+
   export type TPattern =
       TIdentifier
     | TMemberExpression
     | TArrayPattern
     | TObjectPattern
-    | TRestElement;
+    | TRestElement
+    | TAssignmentPattern;
 
   export type TFunctionTypeParam = {
     type: "FunctionTypeParam",

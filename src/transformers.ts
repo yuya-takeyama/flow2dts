@@ -197,6 +197,12 @@ export function transformParameters(params: TPattern[]): string {
         return neverReachHere(`param.argument.type: ${param.argument.type}`);
       }
 
+    case 'AssignmentPattern':
+      const type = param.left.typeAnnotation && param.left.typeAnnotation.typeAnnotation ?
+        `: ${transformConcreteTypeAnnotation(param.left.typeAnnotation.typeAnnotation)}` :
+        '';
+      return `${param.left.name}${type}`;
+
     default:
       return neverReachHere(`Unknown parameter type: ${param.type}: ${position(param.loc)}`);
     }

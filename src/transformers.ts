@@ -39,7 +39,11 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
     return typeAnotationTypeMap[typeAnnotation.type];
 
   case 'GenericTypeAnnotation':
-    return `${typeAnnotation.id.name}${transformTypeParameterInstantiation(typeAnnotation.typeParameters)}`;
+    if (typeAnnotation.id.name === 'Object') {
+      return 'object';
+    } else {
+      return `${typeAnnotation.id.name}${transformTypeParameterInstantiation(typeAnnotation.typeParameters)}`;
+    }
 
   case 'UnionTypeAnnotation':
     return transformUnionTypeAnnotation(typeAnnotation);

@@ -164,6 +164,10 @@ describe('transformers', () => {
         input:  'type Numbers = Array<number>;\n',
         output: 'type Numbers = Array<number>;\n',
       },
+      {
+        input:  'type Foo = Object;\n',
+        output: 'type Foo = object;\n',
+      },
 
       // skipped declaration
       {

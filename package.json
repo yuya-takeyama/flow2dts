@@ -3,7 +3,8 @@
     "build": "tsc",
     "lint": "tslint --project tsconfig.json",
     "lint:fix": "yarn lint --fix",
-    "test": "mocha src/**/*.test.ts"
+    "test": "mocha src/**/*.test.ts",
+    "pretty": "prettier --write 'src/**/*.ts'"
   },
   "dependencies": {
     "flow-parser": "^0.59.0"

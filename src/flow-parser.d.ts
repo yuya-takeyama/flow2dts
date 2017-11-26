@@ -255,6 +255,7 @@ declare module 'flow-parser' {
     generator: boolean,
     loc: TFlowLoc,
     range: TFlowRange,
+    returnType: TTypeAnnotation | null,
   };
 
   export type TExportDefaultDeclaration = {
@@ -265,9 +266,17 @@ declare module 'flow-parser' {
     range: TFlowRange,
   };
 
+  export type TExportNamedDeclaration = {
+    type: "ExportNamedDeclaration",
+    declaration: TFunctionDeclaration,
+    loc: TFlowLoc,
+    range: TFlowRange,
+  }
+
   export type TConcreteTypeAnnotation =
     | TAnyTypeAnnotation
     | TMixedTypeAnnotation
+    | TGenericTypeAnnotation
     | TEmptyTypeAnnotation
     | TVoidTypeAnnotation
     | TNullLiteralTypeAnnotation
@@ -294,6 +303,14 @@ declare module 'flow-parser' {
     type: "MixedTypeAnnotation",
     loc: TFlowLoc,
     range: TFlowRange,
+  };
+
+  export type TGenericTypeAnnotation = {
+    type: "GenericTypeAnnotation",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    id: TIdentifier,
+    typeParameters: object, // TODO
   };
 
   export type TEmptyTypeAnnotation = {
@@ -538,6 +555,7 @@ declare module 'flow-parser' {
     | TForStatement
     | TFunctionDeclaration
     | TExportDefaultDeclaration
+    | TExportNamedDeclaration
     | TIfStatement
     | TImportDeclaration
     | TLabeledStatement

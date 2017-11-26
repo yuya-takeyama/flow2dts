@@ -54,6 +54,10 @@ describe('transformers', () => {
         input:  'export default function(config: Config = {}): string { return \'foo\'; }\n',
         output: 'export default function(config: Config): string;\n',
       },
+      {
+        input:  'export default function(): Promise<Object> { return new Promise(foo()); }\n',
+        output: 'export default function(): Promise<object>;\n',
+      },
 
       // export named function
       {

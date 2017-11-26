@@ -154,7 +154,11 @@ export function transformReturnType(typeAnnotation: TTypeAnnotation | null): str
   if (typeAnnotation && typeAnnotation.typeAnnotation) {
     switch (typeAnnotation.typeAnnotation.type) {
     case 'GenericTypeAnnotation':
-      return `: ${typeAnnotation.typeAnnotation.id.name}`;
+      if (typeAnnotation.typeAnnotation.typeParameters) {
+        return `: ${typeAnnotation.typeAnnotation.id.name}${transformTypeParameterInstantiation(typeAnnotation.typeAnnotation.typeParameters)}`;
+      } else {
+        return `: ${typeAnnotation.typeAnnotation.id.name}`;
+      }
 
     case 'BooleanTypeAnnotation':
     case 'StringTypeAnnotation':

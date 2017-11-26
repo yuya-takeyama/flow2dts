@@ -8,9 +8,13 @@
     "flow-parser": "^0.59.0"
   },
   "devDependencies": {
+    "@types/mocha": "^2.2.44",
     "@types/node": "^8.0.53",
-    "chai": "^4.1.2",
+    "@types/power-assert": "^1.4.29",
+    "mocha": "^4.0.1",
+    "power-assert": "^1.4.4",
     "prettier": "^1.8.2",
+    "ts-node": "^3.3.0",
     "tslint": "^5.8.0",
     "tslint-config-prettier": "^1.6.0",
     "typescript": "^2.6.1"

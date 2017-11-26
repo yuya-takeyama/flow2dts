@@ -284,7 +284,8 @@ declare module 'flow-parser' {
     | TNumberTypeAnnotation
     | TStringTypeAnnotation
     | TBooleanTypeAnnotation
-    | TFunctionTypeAnnotation;
+    | TFunctionTypeAnnotation
+    | TNullableTypeAnnotation;
 
   export type TTypeAnnotation = {
     type: "TypeAnnotation",
@@ -356,6 +357,13 @@ declare module 'flow-parser' {
     range: TFlowRange,
     params: Array<TPattern>,
   };
+
+  export type TNullableTypeAnnotation = {
+    type: "NullableTypeAnnotation",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    typeAnnotation: TConcreteTypeAnnotation,
+  }
 
   export type TFunctionExpression = {
     loc: TFlowLoc,

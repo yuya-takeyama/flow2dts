@@ -26,6 +26,9 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
   case 'GenericTypeAnnotation':
     return typeAnnotation.id.name;
 
+  case 'NullableTypeAnnotation':
+    return transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation);
+
   default:
     return neverReachHere(`Unnown annotation type: ${typeAnnotation.type}`);
   }
@@ -87,7 +90,7 @@ export function transformParameters(params: TPattern[]): string {
     switch (param.type) {
     case 'Identifier':
       if (param.typeAnnotation && param.typeAnnotation.typeAnnotation) {
-        return `${param.name}: ${transformConcreteTypeAnnotation(param.typeAnnotation.typeAnnotation)}`;
+        return `${param.name}${param.typeAnnotation.typeAnnotation.type === 'NullableTypeAnnotation' ? '?' : ''}: ${transformConcreteTypeAnnotation(param.typeAnnotation.typeAnnotation)}`;
       } else {
         return param.name;
       }

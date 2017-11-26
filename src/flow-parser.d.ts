@@ -342,7 +342,8 @@ declare module 'flow-parser' {
     | TObjectTypeAnnotation
     | TUnionTypeAnnotation
     | TStringLiteralTypeAnnotation
-    | TBooleanLiteralTypeAnnotation;
+    | TBooleanLiteralTypeAnnotation
+    | TIntersectionTypeAnnotation;
 
   export type TTypeAnnotation = {
     type: "TypeAnnotation",
@@ -414,6 +415,15 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
   };
+
+  export type TIntersectionTypeAnnotation = {
+    type: "IntersectionTypeAnnotation",
+    loc: TFlowLoc,
+    range: TFlowRange,
+    id: TIdentifier,
+    typeParameters: any, // TODO
+    types: Array<TConcreteTypeAnnotation>,
+  }
 
   export type TFunctionTypeAnnotation = {
     type: "FunctionTypeAnnotation",
@@ -624,7 +634,7 @@ declare module 'flow-parser' {
     type: "FunctionTypeParam",
     loc: TFlowLoc,
     range: TFlowRange,
-    name: TIdentifier,
+    name: TIdentifier | null,
     typeAnnotation: TConcreteTypeAnnotation,
   };
 
@@ -665,7 +675,7 @@ declare module 'flow-parser' {
     loc: TFlowLoc,
     range: TFlowRange,
     name: string,
-    bound: any, // TODO
+    bound: TTypeAnnotation,
     variance: any, // TODO
     default: any, // TODO
   }

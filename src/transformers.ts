@@ -18,6 +18,7 @@ import {
   TUnionTypeAnnotation,
   TFunctionTypeParam,
   TTypeParameterInstantiation,
+  TFunctionTypeAnnotation,
 } from 'flow-parser';
 import { neverReachHere, position } from './utils';
 
@@ -64,6 +65,11 @@ const transformConcreteTypeAnnotation = (typeAnnotation: TConcreteTypeAnnotation
 
   case 'NullableTypeAnnotation':
     return transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation);
+
+  case 'IntersectionTypeAnnotation':
+    return typeAnnotation.types.map(type => {
+      return transformConcreteTypeAnnotation(type);
+    }).join(' & ');
 
   default:
     return neverReachHere(`Unnown annotation type: ${typeAnnotation.type}: ${position(typeAnnotation.loc)}`);
@@ -206,12 +212,20 @@ export function transformReturnType(typeAnnotation: TTypeAnnotation | null): str
     case 'AnyTypeAnnotation':
       return `: ${transformConcreteTypeAnnotation(typeAnnotation.typeAnnotation)}`;
 
+    case 'FunctionTypeAnnotation':
+      return `: ${transformFunctionTypeAnnotation(typeAnnotation.typeAnnotation)}`;
+
     default:
-      return neverReachHere(`Unhandled type annotation type: ${typeAnnotation.typeAnnotation.type}`);
+      return neverReachHere(`Unhandled type annotation type: ${typeAnnotation.typeAnnotation.type}: ${position(typeAnnotation.loc)}`);
     }
   } else {
     return '';
   }
+}
+
+export function transformFunctionTypeAnnotation(functionTypeAnnotation: TFunctionTypeAnnotation): string {
+  return `(${transformFunctionTypeParameters(functionTypeAnnotation.params)}) => ` +
+    `${functionTypeAnnotation.returnType ? transformConcreteTypeAnnotation(functionTypeAnnotation.returnType) : 'void'}`;
 }
 
 export function transformParameters(params: TPattern[]): string {
@@ -257,13 +271,23 @@ export function transformParameters(params: TPattern[]): string {
 
 export function transformFunctionTypeParameters(params: Array<TFunctionTypeParam>): string {
   return params.map(param => {
-    return `${param.name.name}: ${transformConcreteTypeAnnotation(param.typeAnnotation)}`;
+    if (param.name) {
+      return `${param.name.name}: ${transformConcreteTypeAnnotation(param.typeAnnotation)}`;
+    } else {
+      return `${transformConcreteTypeAnnotation(param.typeAnnotation)}`;
+    }
   }).join(', ');
 }
 
 export function transformTypeParameters(typeParameterDeclaration: TTypeParameterDeclaration | null): string {
   if (typeParameterDeclaration) {
-    return `<${typeParameterDeclaration.params.map(typeParameter => typeParameter.name).join(', ')}>`;
+    return `<${typeParameterDeclaration.params.map(typeParameter => {
+      if (typeParameter.bound && typeParameter.bound.typeAnnotation) {
+        return `${typeParameter.name}: ${transformConcreteTypeAnnotation(typeParameter.bound.typeAnnotation)}`;
+      } else {
+        return typeParameter.name;
+      }
+    }).join(', ')}>`;
   } else {
     return '';
   }
@@ -291,8 +315,7 @@ export function transformTypeAlias(typeAlias: TTypeAlias): string {
     return `type ${typeAlias.id.name} = ${transformUnionTypeAnnotation(typeAlias.right)};`;
 
   case 'FunctionTypeAnnotation':
-    return `type ${typeAlias.id.name} = (${transformFunctionTypeParameters(typeAlias.right.params)}) => ` +
-      `${typeAlias.right.returnType ? transformConcreteTypeAnnotation(typeAlias.right.returnType) : 'void'};`;
+    return `type ${typeAlias.id.name} = ${transformFunctionTypeAnnotation(typeAlias.right)};`;
 
   default:
     return neverReachHere(`Unhandled rval type of type alias: ${typeAlias.right.type}: ${position(typeAlias.loc)}`);

@@ -288,6 +288,33 @@ declare module 'flow-parser' {
     right: TConcreteTypeAnnotation;
   };
 
+  export type TDeclareTypeAlias = {
+    type: 'DeclareTypeAlias';
+    loc: TFlowLoc;
+    range: TFlowRange;
+    id: TIdentifier;
+    typeParameters: TTypeParameter | null;
+    right: TConcreteTypeAnnotation;
+  }
+
+  export type TDeclareClass = {
+    type: 'DeclareClass';
+    loc: TFlowLoc;
+    range: TFlowRange;
+    id: TIdentifier;
+    typeParameters: TTypeParameter | null;
+    body: TConcreteTypeAnnotation;
+    extends: Array<any>; // TODO
+  }
+
+  export type TDeclareModule = {
+    type: 'DeclareModule';
+    loc: TFlowLoc;
+    range: TFlowRange;
+    id: TLiteral;
+    body: TBlockStatement;
+  };
+
   export type TObjectTypeProperty = {
     type: 'ObjectTypeProperty';
     loc: TFlowLoc;
@@ -748,7 +775,10 @@ declare module 'flow-parser' {
     | TVariableDeclaration
     | TWhileStatement
     | TWithStatement
-    | TTypeAlias;
+    | TTypeAlias
+    | TDeclareTypeAlias
+    | TDeclareClass
+    | TDeclareModule;
 
   export type TSuper = {
     type: 'Super';

@@ -1,6 +1,7 @@
 import {
   parse,
   TProgram,
+  TStatement,
   TPattern,
   TFunctionDeclaration,
   TTypeAnnotation,
@@ -20,7 +21,7 @@ import {
   TTypeParameterInstantiation,
   TFunctionTypeAnnotation,
 } from 'flow-parser';
-import { neverReachHere, position } from './utils';
+import { neverReachHere, position, indent } from './utils';
 
 const typeAnotationTypeMap = {
   StringTypeAnnotation: 'string',
@@ -116,75 +117,89 @@ export function transform(code: string): string {
 
 export function transformProgram(ast: TProgram): string {
   const result = ast.body
-    .map(statement => {
-      switch (statement.type) {
-        case 'ExportDefaultDeclaration':
-          if (statement.declaration.type === 'FunctionDeclaration') {
-            return `export default ${transformFunctionDeclaration(
-              statement.declaration,
-            )}`;
-          } else {
-            return neverReachHere(
-              `Unhandled expression: ${statement.declaration.type}: ${position(
-                statement.loc,
-              )}`,
-            );
-          }
-
-        case 'ImportDeclaration':
-          return `import ${transformImportSpecifiers(
-            statement.specifiers,
-          )} from ${statement.source.raw};`;
-
-        case 'ExportNamedDeclaration':
-          if (statement.declaration) {
-            switch (statement.declaration.type) {
-              case 'FunctionDeclaration':
-                return `export ${transformFunctionDeclaration(
-                  statement.declaration,
-                )}`;
-
-              case 'TypeAlias':
-                return `export ${transformTypeAlias(statement.declaration)}`;
-
-              case 'VariableDeclaration':
-                return '';
-
-              default:
-                return neverReachHere(
-                  `Unhandled expression: ${position(statement.loc)}`,
-                );
-            }
-          } else {
-            const from = statement.source
-              ? ` from ${statement.source.raw}`
-              : '';
-            return `export ${transformExportSpecifiers(statement.specifiers)}${
-              from
-            };`;
-          }
-
-        case 'ExportAllDeclaration':
-          return `export * from ${statement.source.raw};`;
-
-        case 'TypeAlias':
-          return transformTypeAlias(statement);
-
-        case 'FunctionDeclaration':
-        case 'VariableDeclaration':
-          return '';
-
-        default:
-          return neverReachHere(
-            `Unhandled expression: ${statement.type}: ${position(
-              statement.loc,
-            )}`,
-          );
-      }
-    })
+    .map(transformStatement)
     .filter(statement => statement !== '')
     .join('\n\n');
   return result === '' ? '' : `${result}\n`;
+}
+
+export function transformStatement(statement: TStatement, nestLevel :number = 0): string {
+  switch (statement.type) {
+    case 'ExportDefaultDeclaration':
+      if (statement.declaration.type === 'FunctionDeclaration') {
+        return `export default ${transformFunctionDeclaration(
+          statement.declaration,
+        )}`;
+      } else {
+        return neverReachHere(
+          `Unhandled expression: ${statement.declaration.type}: ${position(
+            statement.loc,
+          )}`,
+        );
+      }
+
+    case 'ImportDeclaration':
+      return `import ${transformImportSpecifiers(statement.specifiers)} from ${
+        statement.source.raw
+      };`;
+
+    case 'ExportNamedDeclaration':
+      if (statement.declaration) {
+        switch (statement.declaration.type) {
+          case 'FunctionDeclaration':
+            return `export ${transformFunctionDeclaration(
+              statement.declaration,
+            )}`;
+
+          case 'TypeAlias':
+            return `export ${transformTypeAlias(statement.declaration)}`;
+
+          case 'VariableDeclaration':
+            return '';
+
+          default:
+            return neverReachHere(
+              `Unhandled expression: ${position(statement.loc)}`,
+            );
+        }
+      } else {
+        const from = statement.source ? ` from ${statement.source.raw}` : '';
+        return `export ${transformExportSpecifiers(statement.specifiers)}${
+          from
+        };`;
+      }
+
+    case 'ExportAllDeclaration':
+      return `export * from ${statement.source.raw};`;
+
+    case 'DeclareModule':
+      return `declare module ${statement.id.raw} {\n` +
+        indent(nestLevel + 1, `${transformStatement(statement.body, nestLevel + 1)}\n`) +
+        '}';
+
+    case 'TypeAlias':
+      return transformTypeAlias(statement);
+
+    case 'DeclareTypeAlias':
+      return `declare type ${statement.id.name} = {\n` +
+        indent(nestLevel + 1, transformConcreteTypeAnnotation(statement.right)) + '\n' +
+        '}';
+
+    case 'DeclareClass':
+      return 'declare class;'
+
+    case 'BlockStatement':
+      return statement.body.map(transformStatement).join('\n\n');
+
+    case 'FunctionDeclaration':
+    case 'VariableDeclaration':
+      return '';
+
+    default:
+      return neverReachHere(
+        `Unhandled expression: ${statement.type}: ${position(statement.loc)}`,
+      );
+  }
 }
 
 export function transformImportSpecifiers(
@@ -454,7 +469,7 @@ export function transformObjectTypeProperties(
 ): string {
   const result = properties
     .map(property => {
-      return `  ${property.key.name}: ${transformConcreteTypeAnnotation(
+      return `  ${property.key.name}${property.optional ? '?' : ''}: ${transformConcreteTypeAnnotation(
         property.value,
       )};`;
     })

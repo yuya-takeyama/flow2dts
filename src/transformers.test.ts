@@ -216,6 +216,46 @@ describe('transformers', () => {
           '}\n',
       },
 
+      // declare
+      {
+        input:
+          "import type { Stats } from 'fs';\n" +
+          "declare module 'sane' {\n" +
+          '  declare type Sane$Options = {\n' +
+          '    glob?: Array<string>,\n' +
+          '    poll?: boolean,\n' +
+          '    watchman?: boolean,\n' +
+          '    dot?: boolean,\n' +
+          '  };\n' +
+          '  declare class Sane$Watcher = {\n' +
+          "    on(event: 'ready', callback: () => mixed): void;\n" +
+          "    on(event: 'change', callback: (filepath: string, root: string, stat: Stats) => mixed): void;\n" +
+          "    on(event: 'add', callback: (filepath: string, root: string, stat: Stats) => mixed): void;\n" +
+          "    on(event: 'delete', callback: (filepath: string, root: string) => mixed): void;\n" +
+          '  }\n' +
+          // '  declare module.exports: (path: string, options?: Sane$Options) => Sane$Watcher;\n' +
+          '}\n',
+
+        output:
+          "import { Stats } from 'fs';\n" +
+          "\n" +
+          "declare module 'sane' {\n" +
+          '  declare type Sane$Options = {\n' +
+          '    glob?: Array<string>;\n' +
+          '    poll?: boolean;\n' +
+          '    watchman?: boolean;\n' +
+          '    dot?: boolean;\n' +
+          '  };\n' +
+          '  declare class Sane$Watcher {\n' +
+          "    on(event: 'ready', callback: () => any): void;\n" +
+          "    on(event: 'change', callback: (filepath: string, root: string, stat: Stats) => any): void;\n" +
+          "    on(event: 'add', callback: (filepath: string, root: string, stat: Stats) => any): void;\n" +
+          "    on(event: 'delete', callback: (filepath: string, root: string) => any): void;\n" +
+          '  }\n' +
+          // '  declare module.exports: (path: string, options?: Sane$Options) => Sane$Watcher;\n' +
+          '}\n',
+      },
+
       // skipped declaration
       {
         input: 'const foo = 1;\n',
